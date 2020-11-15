@@ -648,7 +648,7 @@ def write_video_output(frame, output_img):
 def write_image_output(output_img, content_img, style_imgs, init_img):
   out_dir = os.path.join(args.img_output_dir, str(args.max_iterations)) #Outputpfad + IterationNumber
 
-  content_img_name = os.path.splitext(content_img)[0]
+  content_img_name = os.path.splitext(args.content_img)[0]
   img_path = os.path.join(args.img_output_dir, content_img_name + "_st_" + str(args.round_number) + ".png")
 
   write_image(img_path, output_img)
