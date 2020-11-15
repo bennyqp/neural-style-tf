@@ -219,6 +219,9 @@ def parse_args():
     default=800,
     help='Maximum number of optimizer iterations for each frame after the first frame. (default: %(default)s)')
 
+  parser.add_argument('--round_number', type=int, 
+    help='Number of the next generated Image.')
+
   args = parser.parse_args()
 
   # normalize weights
@@ -643,45 +646,12 @@ def write_video_output(frame, output_img):
   write_image(path, output_img)
 
 def write_image_output(output_img, content_img, style_imgs, init_img):
-  out_dir = os.path.join(args.img_output_dir, str(args.max_iterations))
-  maybe_make_directory(out_dir)
-  img_path = os.path.join(out_dir, args.img_output_dir+'-'+str(args.max_iterations)+'.png')
-  content_path = os.path.join(out_dir, 'content.png')
-  init_path = os.path.join(out_dir, 'init.png')
+  out_dir = os.path.join(args.img_output_dir, str(args.max_iterations)) #Outputpfad + IterationNumber
+
+  img_path = args.img_output_dir + '/' + content_img + "_st_" + str(args.round_number) + ".png"
 
   write_image(img_path, output_img)
-  write_image(content_path, content_img)
-  write_image(init_path, init_img)
-  index = 0
-  for style_img in style_imgs:
-    path = os.path.join(out_dir, 'style_'+str(index)+'.png')
-    write_image(path, style_img)
-    index += 1
   
-  # save the configuration settings
-  out_file = os.path.join(out_dir, 'meta_data.txt')
-  f = open(out_file, 'w')
-  f.write('image_name: {}\n'.format(args.img_name))
-  f.write('content: {}\n'.format(args.content_img))
-  index = 0
-  for style_img, weight in zip(args.style_imgs, args.style_imgs_weights):
-    f.write('styles['+str(index)+']: {} * {}\n'.format(weight, style_img))
-    index += 1
-  index = 0
-  if args.style_mask_imgs is not None:
-    for mask in args.style_mask_imgs:
-      f.write('style_masks['+str(index)+']: {}\n'.format(mask))
-      index += 1
-  f.write('init_type: {}\n'.format(args.init_img_type))
-  f.write('content_weight: {}\n'.format(args.content_weight))
-  f.write('style_weight: {}\n'.format(args.style_weight))
-  f.write('tv_weight: {}\n'.format(args.tv_weight))
-  f.write('content_layers: {}\n'.format(args.content_layers))
-  f.write('style_layers: {}\n'.format(args.style_layers))
-  f.write('optimizer_type: {}\n'.format(args.optimizer))
-  f.write('max_iterations: {}\n'.format(args.max_iterations))
-  f.write('max_image_size: {}\n'.format(args.max_size))
-  f.close()
 
 '''
   image loading and processing
